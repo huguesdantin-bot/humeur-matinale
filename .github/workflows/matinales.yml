@@ -1,0 +1,32 @@
+name: Humeur Matinale
+
+on:
+  schedule:
+    # 9h30 Paris heure d'été (7h30 UTC) — lundi à vendredi
+    - cron: '30 7 * * 1-5'
+  workflow_dispatch:
+    # Permet de lancer manuellement depuis l'interface GitHub
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Installation des dépendances
+        run: pip install -r requirements.txt
+
+      - name: Lancement de l'agent
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          EMAIL_DESTINATAIRE: ${{ secrets.EMAIL_DESTINATAIRE }}
+        run: python main.py
