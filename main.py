@@ -228,8 +228,20 @@ def analyser_source(source, date_cible=None):
     except Exception as e:
         return {"erreur": f"appel Gemini échoué : {str(e)}", "_meta": {"media": source["media"]}}
 
+
     # 6. Parser le JSON
     try:
+        if gemini_response.text is None:
+            finish = "inconnue"
+            try:
+                finish = str(gemini_response.candidates[0].finish_reason)
+            except:
+                pass
+            return {
+                "erreur": f"réponse Gemini vide (finish_reason: {finish})",
+                "_meta": {"media": source["media"]}
+            }
+
         resultat = json.loads(gemini_response.text)
         resultat["_meta"] = {
             "media": source["media"],
@@ -241,10 +253,16 @@ def analyser_source(source, date_cible=None):
             "date": date_cible
         }
         return resultat
-    except Exception as e:
+
+    except json.JSONDecodeError as e:
         return {
             "erreur": f"JSON invalide : {str(e)}",
-            "raw": gemini_response.text[:300],
+            "raw": str(gemini_response.text)[:300] if gemini_response.text else "vide",
+            "_meta": {"media": source["media"]}
+        }
+    except Exception as e:
+        return {
+            "erreur": f"erreur inattendue : {str(e)}",
             "_meta": {"media": source["media"]}
         }
     finally:
