@@ -2,10 +2,11 @@ name: Humeur Matinale
 
 on:
   schedule:
-    # 9h30 Paris heure d'été (7h30 UTC) — lundi à vendredi
     - cron: '30 7 * * 1-5'
   workflow_dispatch:
-    # Permet de lancer manuellement depuis l'interface GitHub
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   run:
