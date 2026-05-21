@@ -1,8 +1,7 @@
 name: Humeur Matinale
 
 on:
-  schedule:
-    - cron: '30 7 * * 1-5'
+
   workflow_dispatch:
 
 env:
